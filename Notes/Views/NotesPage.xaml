@@ -15,6 +15,11 @@
                 ContentLayout="Left,10"
                 Command="{Binding AddCommand}" />
 
+        <Button Text="Выбрать папку для заметок"
+                ImageSource="folder.png"
+                ContentLayout="Left,10"
+        Command="{Binding SelectFolderCommand}" />
+        
         <CollectionView ItemsSource="{Binding Notes}"
                         EmptyView="Список заметок пуст">
 

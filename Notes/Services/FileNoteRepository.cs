@@ -5,11 +5,18 @@ namespace Notes.Services;
 
 public class FileNoteRepository : INoteRepository
 {
-    private readonly string _filePath;
-    //сохраняем файл в папку
+    private string _filePath;
+
+    // по умолчанию сохраняем в AppData
     public FileNoteRepository()
     {
         _filePath = Path.Combine(FileSystem.AppDataDirectory, "notes.json");
+    }
+
+    // метод для смены папки хранения
+    public void SetFolder(string folderPath)
+    {
+        _filePath = Path.Combine(folderPath, "notes.json");
     }
 
     private async Task<List<Note>> LoadAsync()
@@ -37,10 +44,18 @@ public class FileNoteRepository : INoteRepository
         return await LoadAsync();
     }
 
+    public async Task<Note?> GetByIdAsync(Guid id)
+    {
+        var notes = await LoadAsync();
+        return notes.FirstOrDefault(n => n.Id == id);
+    }
+
     public async Task AddAsync(Note note)
     {
         var notes = await LoadAsync();
+
         notes.Add(note);
+
         await SaveAsync(notes);
     }
 
@@ -70,11 +85,5 @@ public class FileNoteRepository : INoteRepository
             notes.Remove(note);
 
         await SaveAsync(notes);
-    }
-
-    public async Task<Note?> GetByIdAsync(Guid id)
-    {
-        var notes = await LoadAsync();
-        return notes.FirstOrDefault(n => n.Id == id);
     }
 }

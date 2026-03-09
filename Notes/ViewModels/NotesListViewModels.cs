@@ -1,8 +1,14 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Linq;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 using Notes.Models;
 using Notes.Services;
 using Notes.Views;
+
+#if WINDOWS
+using System.Windows.Forms;
+#endif
 
 namespace Notes.ViewModels;
 
@@ -15,6 +21,12 @@ public sealed class NotesListViewModel : BaseViewModel
 
     public ObservableCollection<Note> Notes { get; } = new();
 
+    public ICommand LoadCommand { get; }
+    public ICommand AddCommand { get; }
+    public ICommand EditCommand { get; }
+    public ICommand DeleteCommand { get; }
+    public ICommand SelectFolderCommand { get; }
+
     public NotesListViewModel(INoteRepository repository)
     {
         _repository = repository;
@@ -23,6 +35,7 @@ public sealed class NotesListViewModel : BaseViewModel
         AddCommand = new Command(async () => await OpenEditorAsync(Guid.Empty));
         EditCommand = new Command<Note>(async note => await OpenEditorAsync(note?.Id ?? Guid.Empty));
         DeleteCommand = new Command<Note>(async note => await DeleteAsync(note));
+        SelectFolderCommand = new Command(async () => await SelectFolder());
     }
 
     public bool IsBusy
@@ -34,11 +47,6 @@ public sealed class NotesListViewModel : BaseViewModel
                 ((Command)LoadCommand).ChangeCanExecute();
         }
     }
-
-    public ICommand LoadCommand { get; }
-    public ICommand AddCommand { get; }
-    public ICommand EditCommand { get; }
-    public ICommand DeleteCommand { get; }
 
     public async Task LoadAsync()
     {
@@ -107,5 +115,22 @@ public sealed class NotesListViewModel : BaseViewModel
 
         Notes.Remove(note);
         AllNotes.Remove(note);
+    }
+
+    private async Task SelectFolder()
+    {
+#if WINDOWS
+        using var dialog = new FolderBrowserDialog();
+
+        var result = dialog.ShowDialog();
+
+        if (result == DialogResult.OK)
+        {
+            var repo = (FileNoteRepository)_repository;
+            repo.SetFolder(dialog.SelectedPath);
+
+            await LoadAsync();
+        }
+#endif
     }
 }
