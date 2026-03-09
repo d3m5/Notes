@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:model="clr-namespace:Notes.Models"
+             x:Class="Notes.Views.NotesPage"
+             x:Name="NotesRoot"
+             Title="Заметки">
+
+    <VerticalStackLayout Padding="16" Spacing="12">
+        <SearchBar Placeholder="Поиск заметок"
+           Text="{Binding SearchText}" />
+
+        <Button Text="Добавить заметку"
+                ImageSource="add.png"
+                ContentLayout="Left,10"
+                Command="{Binding AddCommand}" />
+
+        <CollectionView ItemsSource="{Binding Notes}"
+                        EmptyView="Список заметок пуст">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Note">
+
+                    <Border StrokeThickness="1"
+                            Stroke="#D0D0D0"
+                            Padding="12"
+                            Margin="0,0,0,8">
+
+                        <Grid RowDefinitions="Auto,Auto,Auto"
+                              ColumnDefinitions="*,Auto,Auto"
+                              ColumnSpacing="8"
+                              RowSpacing="6">
+
+                            <Label Grid.ColumnSpan="3"
+                                   Text="{Binding Title}"
+                                   FontAttributes="Bold"
+                                   FontSize="16" />
+
+                            <Label Grid.Row="1"
+                                   Grid.ColumnSpan="3"
+                                   Text="{Binding Content}"
+                                   LineBreakMode="WordWrap" />
+
+                            <Label Grid.Row="2"
+                                   FontSize="11"
+                                   TextColor="Gray"
+                                   Text="{Binding UpdatedAt, StringFormat='Обновлено: {0:dd.MM.yyyy HH:mm}'}" />
+
+                            <Button Grid.Row="2"
+                                    Grid.Column="1"
+                                    Text="Изменить"
+                                    ImageSource="edit.png"
+                                    ContentLayout="Left,8"
+                                    Command="{Binding Source={x:Reference NotesRoot}, Path=BindingContext.EditCommand}"
+                                    CommandParameter="{Binding .}" />
+
+                            <Button Grid.Row="2"
+                                    Grid.Column="2"
+                                    Text="Удалить"
+                                    ImageSource="delete.png"
+                                    ContentLayout="Left,8"
+                                    Command="{Binding Source={x:Reference NotesRoot}, Path=BindingContext.DeleteCommand}"
+                                    CommandParameter="{Binding .}" />
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentPage>

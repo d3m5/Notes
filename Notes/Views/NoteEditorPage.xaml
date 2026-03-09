@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Notes.Views.NoteEditorPage"
+             Title="{Binding ScreenTitle}">
+
+    <VerticalStackLayout Padding="16" Spacing="10">
+
+        <Label Text="Заголовок" />
+        <Entry Text="{Binding Title}"
+               Placeholder="Введите заголовок" />
+
+        <Label Text="Текст" />
+        <Editor Text="{Binding Content}"
+                AutoSize="TextChanges"
+                Placeholder="Введите текст заметки"
+                HeightRequest="200" />
+
+        <HorizontalStackLayout Spacing="10">
+
+            <Button Text="Сохранить"
+                    ImageSource="save.png"
+                    ContentLayout="Left,8"
+                    Command="{Binding SaveCommand}" />
+
+            <Button Text="Отмена"
+                    ImageSource="cancel.png"
+                    ContentLayout="Left,8"
+                    Command="{Binding CancelCommand}" />
+
+        </HorizontalStackLayout>
+
+    </VerticalStackLayout>
+
+</ContentPage>
